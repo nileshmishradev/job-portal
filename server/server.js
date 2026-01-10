@@ -4,22 +4,35 @@ import cors from "cors";
 import "dotenv/config";
 import connectDB from './config/db.js'
 import { clerkWebhooks } from "./controllers/webhooks.js";
+import companyRoutes from "./routes/companyRoutes.js";
+import jobRoutes from "./routes/jobRoutes.js";
+import connectCloudinary from "./config/cloudinary.js";
+
+
 // Initialize Express app
 const app = express();
 
 // connect db
-
 await connectDB()
+
 // Middleware
 app.use(cors());
 app.use(express.json()); // Parse JSON request bodies
+
+//Cloudinary
+connectCloudinary(); 
 
 // Routes
 app.get("/", (req, res) => {
   res.send("API Working");
 });
-// For webhook route
+
+// clerk webhook route
 app.post('/api/clerk', clerkWebhooks);
+
+// routes
+app.use("/api/company", companyRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // Set the port from environment variable or default
 const PORT = process.env.PORT || 5000;
